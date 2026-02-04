@@ -69,6 +69,8 @@ export async function main(ns) {
     var targetNumServers = ns.getPurchasedServerLimit();
     const ram = calcBestRam(ns, targetNumServers);
 
+    if (ram > 0) {
+
     ns.tprint(" ------------------ ");
     ns.tprint("servers    : ");
     ns.tprint("have       : " + currentNumServers);
@@ -107,6 +109,7 @@ export async function main(ns) {
 
     await ns.asleep(1000 * 60);
 
+  }
   }
 
 }
