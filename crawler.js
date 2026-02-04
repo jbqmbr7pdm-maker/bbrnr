@@ -12,10 +12,10 @@ export async function main(ns) {
     if (newTargetServer != targetServer) {
       await getRootAccess(ns, newTargetServer);
       ns.tprint("crawler.js now targeting " + newTargetServer);
-      for (const host of getHostServers(ns)) {
-        await ns.asleep(1000 * 1);
-        await runHack(ns, host, newTargetServer);
-      }
+    }
+    for (const host of getHostServers(ns)) {
+      await ns.asleep(1000 * 1);
+      await runHack(ns, host, targetServer, newTargetServer);
     }
     targetServer = newTargetServer;
     await ns.asleep(1000 * 60);
@@ -40,14 +40,16 @@ async function killAndRerun(ns, pid, host, target) {
   }
 }
 
-async function runHack(ns, host, target) {
+async function runHack(ns, host, oldtarget, newtarget) {
   var hacker = "hacker.js"
   await getRootAccess(ns, host);
 
-  var runningScript = ns.getRunningScript(hacker, host, target);
+  var runningScript = ns.getRunningScript(hacker, host, oldtarget);
 
   if (runningScript == null) {
-    await killAndRerun(ns, 0, host, target);
+    await killAndRerun(ns, 0, host, newtarget);
+  } else if (oldtarget != newtarget && script_pid > 0) {
+    await killAndRerun(ns, runningScript.pid, host, newtarget);
   } else {
 
     var script_pid = runningScript.pid;
@@ -56,11 +58,11 @@ async function runHack(ns, host, target) {
     var script_target = runningScript.args[0];
 
     if (script_target != target) {
-      await killAndRerun(ns, script_pid, host, target);
+      await killAndRerun(ns, script_pid, host, newtarget);
     } else if (script_pid <= 0) {
-      await killAndRerun(ns, script_pid, host, target);
+      await killAndRerun(ns, script_pid, host, newtarget);
     } else if (script_threads > getNoOfThreads(ns, hacker, host, script_ramUsage)) {
-      await killAndRerun(ns, script_pid, host, target);
+      await killAndRerun(ns, script_pid, host, newtarget);
     }
   }
 
