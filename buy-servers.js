@@ -109,7 +109,9 @@ export async function main(ns) {
 
 
     }
-      await ns.asleep(1000 * 60);
+
+    await ns.asleep(1000 * 60);
+
   }
 
 }
