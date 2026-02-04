@@ -16,7 +16,7 @@ export async function main(ns) {
 
   scripts.forEach((s, index) => {
     ns.wget("https://raw.githubusercontent.com/jbqmbr7pdm-maker/bbrnr/refs/heads/main/" + s.script, s.script);
-    if (s.autorun) {
+    if (s.autorun == "true") {
       ns.run(s.script);
     }
   })
