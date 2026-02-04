@@ -85,6 +85,9 @@ async function runHack(ns, host, oldtarget, newtarget) {
 function getNoOfThreads(ns, script, host, ramToSubtract = 0) {
   var scriptRAM = ns.getScriptRam(script);
   var hostRAM = (ns.getServerMaxRam(host) - (ns.getServerUsedRam(host) - ramToSubtract));
+  if (host == "home") {
+    hostRAM = hostRAM - 16; //ram to save
+  }
   var noOfThreads = Math.floor(hostRAM / scriptRAM);
   return noOfThreads;
 }
