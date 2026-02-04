@@ -2,7 +2,7 @@
 export async function main(ns) {
 
   var scripts = [
-    { "script": "buy-servers", "autorun": "true" },
+    { "script": "buy-servers.js", "autorun": "true" },
     { "script": "hacker.js", "autorun": "false" },
     { "script": "crawler.js", "autorun": "true" }
   ]
