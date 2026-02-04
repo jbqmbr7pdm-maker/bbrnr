@@ -107,9 +107,9 @@ export async function main(ns) {
         ns.purchaseServer(newServerName, ram);
       }
 
-      await ns.asleep(1000 * 60);
 
     }
+      await ns.asleep(1000 * 60);
   }
 
 }
