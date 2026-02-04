@@ -57,7 +57,7 @@ async function runHack(ns, host, oldtarget, newtarget) {
     var script_threads = runningScript.threads;
     var script_target = runningScript.args[0];
 
-    if (script_target != target) {
+    if (script_target != newtarget) {
       await killAndRerun(ns, script_pid, host, newtarget);
     } else if (script_pid <= 0) {
       await killAndRerun(ns, script_pid, host, newtarget);
