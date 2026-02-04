@@ -27,6 +27,8 @@ export async function main(ns) {
                     itemType = "CPU";
             }
         }
+
+        ns.tprint("trying to buy " + itemType + " " + nodeNum + " for " + cheapest);
  
         // If affordable, purchase and recalculate above
         var purchased = false;
