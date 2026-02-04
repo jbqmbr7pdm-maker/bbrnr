@@ -7,6 +7,11 @@ export async function main(ns) {
     { "script": "crawler.js", "autorun": "true" }
   ]
 
+  /*
+    wget https://raw.githubusercontent.com/jbqmbr7pdm-maker/bbrnr/refs/heads/main/startup.js startup.js
+    run startup.js
+  */
+
 
   scripts.forEach((s, index) => {
     ns.wget("https://raw.githubusercontent.com/jbqmbr7pdm-maker/bbrnr/refs/heads/main/" + s.script, s.script);
