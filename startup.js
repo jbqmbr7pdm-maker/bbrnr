@@ -11,6 +11,7 @@ export async function main(ns) {
   /*
     wget https://raw.githubusercontent.com/jbqmbr7pdm-maker/bbrnr/refs/heads/main/startup.js startup.js
     run startup.js
+    alias buyOpeners="buy bruteSSH.exe ; buy FTPcrack.exe ; buy relaySMTP.exe ; buy HTTPworm.exe ; buy SQLinject.exe"
   */
 
 
