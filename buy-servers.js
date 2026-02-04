@@ -71,45 +71,45 @@ export async function main(ns) {
 
     if (ram > 0) {
 
-    ns.tprint(" ------------------ ");
-    ns.tprint("servers    : ");
-    ns.tprint("have       : " + currentNumServers);
-    ns.tprint("target     : " + targetNumServers);
-    ns.tprint("target ram : " + ram);
-    ns.tprint(" ------------------ ");
+      ns.tprint(" ------------------ ");
+      ns.tprint("servers    : ");
+      ns.tprint("have       : " + currentNumServers);
+      ns.tprint("target     : " + targetNumServers);
+      ns.tprint("target ram : " + ram);
+      ns.tprint(" ------------------ ");
 
 
-    let pservObjs = pservs.map(server => {
-      return {
-        'name': server,
-        'ram': ns.getServerMaxRam(server)
+      let pservObjs = pservs.map(server => {
+        return {
+          'name': server,
+          'ram': ns.getServerMaxRam(server)
+        }
+      })
+      var ownedServersUnderTargetRam = pservObjs.filter(f => f.ram < ram);
+
+      ownedServersUnderTargetRam.forEach((server, index) => {
+        deleteServer(ns, server);
+      })
+
+      pservs = ns.getPurchasedServers();
+      currentNumServers = pservs.length;
+
+      ns.tprint(" ------------------ ");
+      ns.tprint("servers    : ");
+      ns.tprint("have       : " + currentNumServers);
+      ns.tprint("target     : " + targetNumServers);
+      ns.tprint("target ram : " + ram);
+      ns.tprint(" ------------------ ");
+
+      while (ns.getPurchasedServers().length < targetNumServers) {
+        var newServerName = "home-" + ram + "-" + uuidv4();
+        ns.tprint("buying     : " + newServerName + " (ram = " + ram + ")");
+        ns.purchaseServer(newServerName, ram);
       }
-    })
-    var ownedServersUnderTargetRam = pservObjs.filter(f => f.ram < ram);
 
-    ownedServersUnderTargetRam.forEach((server, index) => {
-      deleteServer(ns, server);
-    })
+      await ns.asleep(1000 * 60);
 
-    pservs = ns.getPurchasedServers();
-    currentNumServers = pservs.length;
-
-    ns.tprint(" ------------------ ");
-    ns.tprint("servers    : ");
-    ns.tprint("have       : " + currentNumServers);
-    ns.tprint("target     : " + targetNumServers);
-    ns.tprint("target ram : " + ram);
-    ns.tprint(" ------------------ ");
-
-    while (ns.getPurchasedServers().length < targetNumServers) {
-      var newServerName = "home-" + ram +"-" + uuidv4();
-      ns.tprint("buying     : " + newServerName + " (ram = " + ram + ")");
-      ns.purchaseServer(newServerName, ram);
     }
-
-    await ns.asleep(1000 * 60);
-
-  }
   }
 
 }
