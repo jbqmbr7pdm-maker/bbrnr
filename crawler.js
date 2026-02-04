@@ -23,11 +23,11 @@ export async function main(ns) {
   }
 }
 
-async function killAndRerun(ns, pid, host, target) {
+async function killAndRerun(ns, kill, host, target) {
   var hacker = "hacker.js"
-  if (pid > 0) {
+  if (kill) {
     ns.tprint("killing " + hacker + " on " + host);
-    await ns.kill("hacker.js", host, target)
+    ns.scriptKill("hacker.js", host)
   }
   await ns.scp(hacker, host, "home");
   var threads = getNoOfThreads(ns, hacker, host);
@@ -44,26 +44,39 @@ async function runHack(ns, host, oldtarget, newtarget) {
   var hacker = "hacker.js"
   await getRootAccess(ns, host);
 
-  var runningScript = ns.getRunningScript(hacker, host, oldtarget);
+  var isScriptRunning = ns.scriptRunning(hacker, host);
 
-  if (runningScript == null) {
-    await killAndRerun(ns, 0, host, newtarget);
-  } else if (oldtarget != newtarget && script_pid > 0) {
-    await killAndRerun(ns, runningScript.pid, host, newtarget);
-  } else {
+  if (isScriptRunning) {
+    isScriptRunning = ns.isRunning(hacker, host, newtarget);
+    if (isScriptRunning) {
+      var runningScript = ns.getRunningScript(hacker, host, newtarget);
+      var script_pid = runningScript.pid;
+      var script_ramUsage = runningScript.ramUsage;
+      var script_threads = runningScript.threads;
+      var script_target = runningScript.args[0];
+      var threadsAvailable = getNoOfThreads(ns, hacker, host, script_ramUsage);
 
-    var script_pid = runningScript.pid;
-    var script_ramUsage = runningScript.ramUsage;
-    var script_threads = runningScript.threads;
-    var script_target = runningScript.args[0];
 
-    if (script_target != newtarget) {
-      await killAndRerun(ns, script_pid, host, newtarget);
-    } else if (script_pid <= 0) {
-      await killAndRerun(ns, script_pid, host, newtarget);
-    } else if (script_threads > getNoOfThreads(ns, hacker, host, script_ramUsage)) {
-      await killAndRerun(ns, script_pid, host, newtarget);
+      if (script_target != newtarget) {
+        ns.tprint("killing & starting hacker - change in target")
+        await killAndRerun(ns, true, host, newtarget);
+      } else if (script_pid <= 0) {
+        ns.tprint("killing & starting hacker - no script")
+        await killAndRerun(ns, true, host, newtarget);
+      } else if (threadsAvailable > script_threads) {
+        ns.tprint("killing & starting hacker - change in threads")
+        ns.tprint("want " + threadsAvailable + " threads")
+        ns.tprint("currently using " + script_threads + " threads")
+        await killAndRerun(ns, true, host, newtarget);
+      }
+
+
+    } else {
+      await killAndRerun(ns, true, host, newtarget);
     }
+
+  } else {
+    await killAndRerun(ns, true, host, newtarget);
   }
 
 
